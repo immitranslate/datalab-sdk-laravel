@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace ImmiTranslate\Datalab\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class DatalabCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'datalab-sdk-laravel';
 
     public $description = 'My command';
 
