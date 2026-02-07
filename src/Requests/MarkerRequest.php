@@ -139,6 +139,9 @@ class MarkerRequest
         return $this->set('extras', $extras);
     }
 
+    /**
+     * Optional. Overrides the webhook URL configured at the account level for this request only.
+     */
     public function webhookUrl(?string $webhookUrl): static
     {
         return $this->set('webhook_url', $webhookUrl);

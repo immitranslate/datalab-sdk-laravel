@@ -4,6 +4,7 @@ return [
     'endpoint' => env('DATALAB_ENDPOINT', 'https://www.datalab.to/api/v1/'),
     'api_key' => env('DATALAB_API_KEY', ''),
     'marker_poll_interval_seconds' => (int) env('DATALAB_MARKER_POLL_INTERVAL_SECONDS', 5),
+    'extraction_schema_poll_interval_seconds' => (int) env('DATALAB_EXTRACTION_SCHEMA_POLL_INTERVAL_SECONDS', 5),
     'supported_files' => [
         'mimetypes' => [
             'application/pdf',

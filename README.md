@@ -7,14 +7,6 @@
 
 This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/datalab-sdk-laravel.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/datalab-sdk-laravel)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
-
 ## Installation
 
 You can install the package via composer:
@@ -36,6 +28,7 @@ return [
     'endpoint' => env('DATALAB_ENDPOINT', 'https://www.datalab.to/api/v1/'),
     'api_key' => env('DATALAB_API_KEY'),
     'marker_poll_interval_seconds' => (int) env('DATALAB_MARKER_POLL_INTERVAL_SECONDS', 5),
+    'extraction_schema_poll_interval_seconds' => (int) env('DATALAB_EXTRACTION_SCHEMA_POLL_INTERVAL_SECONDS', 5),
     'supported_files' => [
         'mimetypes' => [
             'application/pdf',
@@ -103,7 +96,7 @@ $response = Datalab::marker()
     ->fileUrl('https://r2.aws.com/test.pdf')
     ->mode(DatalabMode::Fast)
     ->outputFormat(DatalabOutput::Json)
-    ->webhookUrl('https://testwebhook.com/test123')
+    ->webhookUrl('https://testwebhook.com/test123') // optional; overrides account-level webhook for this request
     ->execute(); // alias of executeSync(), polls /marker/{request_id}
 
 if ($response->isSuccess()) {
@@ -113,6 +106,15 @@ if ($response->isSuccess()) {
 // If you only want the initial request_id response (no polling):
 $queued = Datalab::marker()->executeAsync();
 // $queued->requestId, $queued->requestCheckUrl, $queued->isValidationError()
+
+$schemaResponse = Datalab::generateSchemas()
+    ->checkpoint('asdf123')
+    ->webhookUrl('https://test.com') // optional; overrides account-level webhook for this request
+    ->generate(); // alias of generateSync(), polls request_check_url
+
+if ($schemaResponse->isSuccess()) {
+    // $schemaResponse->suggestions['simple_schema'], moderate_schema, complex_schema
+}
 ```
 
 ## Testing
