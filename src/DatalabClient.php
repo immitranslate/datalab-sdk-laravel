@@ -2,8 +2,8 @@
 
 namespace ImmiTranslate\Datalab;
 
-use ImmiTranslate\Datalab\Requests\MarkerRequest;
 use ImmiTranslate\Datalab\Requests\ExtractionSchemaRequest;
+use ImmiTranslate\Datalab\Requests\MarkerRequest;
 
 class DatalabClient
 {

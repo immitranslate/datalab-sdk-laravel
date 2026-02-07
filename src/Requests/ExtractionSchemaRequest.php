@@ -25,7 +25,7 @@ class ExtractionSchemaRequest
     }
 
     /**
-     * @param string $checkpointId The checkpoint ID provided from the MarkerResultResponse object
+     * @param  string  $checkpointId  The checkpoint ID provided from the MarkerResultResponse object
      * @return $this
      */
     public function checkpoint(string $checkpointId): static
