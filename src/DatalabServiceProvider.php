@@ -2,6 +2,7 @@
 
 namespace ImmiTranslate\Datalab;
 
+use ImmiTranslate\Datalab\Commands\DatalabCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
