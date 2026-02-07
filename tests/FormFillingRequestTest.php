@@ -23,7 +23,6 @@ it('sends form filling request with fields and options', function () {
             new FormField(fieldKey: 'title', description: 'The title of the movie'),
             new FormField(fieldKey: 'director', description: 'The director of the movie'),
         ])
-        ->webhookUrl('https://webhook.site/datalab-webhook')
         ->context('This is the form each Oscar nomination should fill out')
         ->confidenceThreshold(0.5)
         ->pageRange('1-15')
@@ -42,8 +41,6 @@ it('sends form filling request with fields and options', function () {
             && str_contains($body, 'name="field_data"')
             && str_contains($body, '"title":{"value":null,"description":"The title of the movie"}')
             && str_contains($body, '"director":{"value":null,"description":"The director of the movie"}')
-            && str_contains($body, 'name="webhook_url"')
-            && str_contains($body, 'https://webhook.site/datalab-webhook')
             && str_contains($body, 'name="context"')
             && str_contains($body, 'Oscar nomination')
             && str_contains($body, 'name="confidence_threshold"')

@@ -123,7 +123,6 @@ $fillResponse = Datalab::formFilling()
         new FormField(fieldKey: 'title', description: 'The title of the movie'),
         new FormField(fieldKey: 'director', description: 'The name of the director of the movie'),
     ])
-    ->webhookUrl('https://webhook.site/datalab-webhook') // optional; overrides account-level webhook for this request
     ->context('This is the form each Oscar nomination should fill out')
     ->confidenceThreshold(0.5)
     ->pageRange('1-15')

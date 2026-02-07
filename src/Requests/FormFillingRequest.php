@@ -128,14 +128,6 @@ class FormFillingRequest
         return $this->set('skip_cache', $skipCache ? 'true' : 'false');
     }
 
-    /**
-     * Optional. Overrides the webhook URL configured at the account level for this request only.
-     */
-    public function webhookUrl(?string $webhookUrl): static
-    {
-        return $this->set('webhook_url', $webhookUrl);
-    }
-
     public function file(string $path, ?string $filename = null): static
     {
         if (! is_file($path) || ! is_readable($path)) {
