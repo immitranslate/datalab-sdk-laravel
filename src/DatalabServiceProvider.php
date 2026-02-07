@@ -15,6 +15,7 @@ class DatalabServiceProvider extends PackageServiceProvider
                 apiKey: (string) config('datalab-sdk-laravel.api_key'),
                 markerPollIntervalSeconds: (int) config('datalab-sdk-laravel.marker_poll_interval_seconds', 5),
                 extractionSchemaPollIntervalSeconds: (int) config('datalab-sdk-laravel.extraction_schema_poll_interval_seconds', 5),
+                formFillingPollIntervalSeconds: (int) config('datalab-sdk-laravel.form_filling_poll_interval_seconds', 5),
             );
         });
     }

@@ -29,6 +29,7 @@ return [
     'api_key' => env('DATALAB_API_KEY'),
     'marker_poll_interval_seconds' => (int) env('DATALAB_MARKER_POLL_INTERVAL_SECONDS', 5),
     'extraction_schema_poll_interval_seconds' => (int) env('DATALAB_EXTRACTION_SCHEMA_POLL_INTERVAL_SECONDS', 5),
+    'form_filling_poll_interval_seconds' => (int) env('DATALAB_FORM_FILLING_POLL_INTERVAL_SECONDS', 5),
     'supported_files' => [
         'mimetypes' => [
             'application/pdf',
@@ -91,6 +92,7 @@ php artisan vendor:publish --tag="datalab-sdk-laravel-views"
 use ImmiTranslate\Datalab\Enums\DatalabMode;
 use ImmiTranslate\Datalab\Enums\DatalabOutput;
 use ImmiTranslate\Datalab\Facades\Datalab;
+use ImmiTranslate\Datalab\FormField;
 
 $response = Datalab::marker()
     ->fileUrl('https://r2.aws.com/test.pdf')
@@ -114,6 +116,22 @@ $schemaResponse = Datalab::generateSchemas()
 
 if ($schemaResponse->isSuccess()) {
     // $schemaResponse->suggestions['simple_schema'], moderate_schema, complex_schema
+}
+
+$fillResponse = Datalab::formFilling()
+    ->fields([
+        new FormField(fieldKey: 'title', description: 'The title of the movie'),
+        new FormField(fieldKey: 'director', description: 'The name of the director of the movie'),
+    ])
+    ->webhookUrl('https://webhook.site/datalab-webhook') // optional; overrides account-level webhook for this request
+    ->context('This is the form each Oscar nomination should fill out')
+    ->confidenceThreshold(0.5)
+    ->pageRange('1-15')
+    ->file('/absolute/path/to/form.pdf') // optional local file upload
+    ->execute(); // alias of executeSync(), polls request_check_url
+
+if ($fillResponse->isSuccess()) {
+    // Access full payload via $fillResponse->raw
 }
 ```
 

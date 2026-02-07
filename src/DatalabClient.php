@@ -3,6 +3,7 @@
 namespace ImmiTranslate\Datalab;
 
 use ImmiTranslate\Datalab\Requests\ExtractionSchemaRequest;
+use ImmiTranslate\Datalab\Requests\FormFillingRequest;
 use ImmiTranslate\Datalab\Requests\MarkerRequest;
 
 class DatalabClient
@@ -12,6 +13,7 @@ class DatalabClient
         protected string $apiKey,
         protected int $markerPollIntervalSeconds = 5,
         protected int $extractionSchemaPollIntervalSeconds = 5,
+        protected int $formFillingPollIntervalSeconds = 5,
     ) {}
 
     public function marker(?int $pollIntervalSeconds = null): MarkerRequest
@@ -30,6 +32,16 @@ class DatalabClient
             endpoint: $this->endpoint,
             apiKey: $this->apiKey,
             defaultPollIntervalSeconds: $this->extractionSchemaPollIntervalSeconds,
+            pollIntervalSeconds: $pollIntervalSeconds,
+        );
+    }
+
+    public function formFilling(?int $pollIntervalSeconds = null): FormFillingRequest
+    {
+        return new FormFillingRequest(
+            endpoint: $this->endpoint,
+            apiKey: $this->apiKey,
+            defaultPollIntervalSeconds: $this->formFillingPollIntervalSeconds,
             pollIntervalSeconds: $pollIntervalSeconds,
         );
     }
