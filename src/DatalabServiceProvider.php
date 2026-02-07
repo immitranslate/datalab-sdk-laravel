@@ -18,8 +18,6 @@ class DatalabServiceProvider extends PackageServiceProvider
         $package
             ->name('datalab-sdk-laravel')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_datalab_sdk_laravel_table')
-            ->hasCommand(DatalabCommand::class);
+            ->hasViews();
     }
 }
