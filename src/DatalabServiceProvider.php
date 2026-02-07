@@ -4,10 +4,20 @@ namespace ImmiTranslate\Datalab;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use ImmiTranslate\Datalab\Commands\DatalabCommand;
 
 class DatalabServiceProvider extends PackageServiceProvider
 {
+    public function registeringPackage(): void
+    {
+        $this->app->singleton('datalab', function (): DatalabClient {
+            return new DatalabClient(
+                endpoint: (string) config('datalab-sdk-laravel.endpoint'),
+                apiKey: (string) config('datalab-sdk-laravel.api_key'),
+                markerPollIntervalSeconds: (int) config('datalab-sdk-laravel.marker_poll_interval_seconds', 5),
+            );
+        });
+    }
+
     public function configurePackage(Package $package): void
     {
         /*

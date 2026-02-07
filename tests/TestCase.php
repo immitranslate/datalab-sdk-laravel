@@ -27,6 +27,9 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        config()->set('datalab-sdk-laravel.endpoint', 'https://www.datalab.to/api/v1/');
+        config()->set('datalab-sdk-laravel.api_key', 'test-api-key');
+        config()->set('datalab-sdk-laravel.marker_poll_interval_seconds', 5);
 
         /*
          foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/../database/migrations') as $migration) {

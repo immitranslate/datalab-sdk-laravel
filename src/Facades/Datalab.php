@@ -5,12 +5,14 @@ namespace ImmiTranslate\Datalab\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \ImmiTranslate\Datalab\Datalab
+ * @see \ImmiTranslate\Datalab\DatalabClient
+ *
+ * @method static \ImmiTranslate\Datalab\Requests\MarkerRequest marker(?int $pollIntervalSeconds = null)
  */
 class Datalab extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \ImmiTranslate\Datalab\Datalab::class;
+        return 'datalab';
     }
 }
