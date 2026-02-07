@@ -93,5 +93,4 @@ class FormFillingResultResponse
     {
         return $this->isComplete() && $this->success === true;
     }
-
 }
