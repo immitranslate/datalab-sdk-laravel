@@ -33,6 +33,8 @@ This is the contents of the published config file:
 
 ```php
 return [
+    'endpoint' => env('DATALAB_ENDPOINT', 'https://www.datalab.to/api/v1/'),
+    'api_key' => env('DATALAB_API_KEY'),
 ];
 ```
 
