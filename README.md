@@ -5,7 +5,7 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/immitranslate/datalab-sdk-laravel/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/immitranslate/datalab-sdk-laravel/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/immitranslate/datalab-sdk-laravel.svg?style=flat-square)](https://packagist.org/packages/immitranslate/datalab-sdk-laravel)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+To obtain an API key for Datalab, go to the [Settings](https://www.datalab.to/settings) page once you've created an account.
 
 ## Installation
 
@@ -21,72 +21,9 @@ You can publish the config file with:
 php artisan vendor:publish --tag="datalab-sdk-laravel-config"
 ```
 
-This is the contents of the published config file:
-
-```php
-return [
-    'endpoint' => env('DATALAB_ENDPOINT', 'https://www.datalab.to/api/v1/'),
-    'api_key' => env('DATALAB_API_KEY'),
-    'marker_poll_interval_seconds' => (int) env('DATALAB_MARKER_POLL_INTERVAL_SECONDS', 5),
-    'extraction_schema_poll_interval_seconds' => (int) env('DATALAB_EXTRACTION_SCHEMA_POLL_INTERVAL_SECONDS', 5),
-    'form_filling_poll_interval_seconds' => (int) env('DATALAB_FORM_FILLING_POLL_INTERVAL_SECONDS', 5),
-    'supported_files' => [
-        'mimetypes' => [
-            'application/pdf',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'application/vnd.ms-excel.sheet.macroEnabled.12',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
-            'text/csv',
-            'application/vnd.oasis.opendocument.spreadsheet',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.oasis.opendocument.text',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'application/vnd.oasis.opendocument.presentation',
-            'text/html',
-            'application/epub+zip',
-            'image/png',
-            'image/jpeg',
-            'image/webp',
-            'image/gif',
-            'image/tiff',
-        ],
-        'extensions' => [
-            'pdf',
-            'xls',
-            'xlsx',
-            'xlsm',
-            'xltx',
-            'csv',
-            'ods',
-            'doc',
-            'docx',
-            'odt',
-            'ppt',
-            'pptx',
-            'odp',
-            'html',
-            'epub',
-            'png',
-            'jpg',
-            'jpeg',
-            'webp',
-            'gif',
-            'tiff',
-        ],
-    ],
-];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag="datalab-sdk-laravel-views"
-```
-
 ## Usage
+
+### Marker API
 
 ```php
 use ImmiTranslate\Datalab\Enums\DatalabMode;
@@ -108,6 +45,12 @@ if ($response->isSuccess()) {
 // If you only want the initial request_id response (no polling):
 $queued = Datalab::marker()->executeAsync();
 // $queued->requestId, $queued->requestCheckUrl, $queued->isValidationError()
+```
+
+### Schema API
+
+```php
+use ImmiTranslate\Datalab\Facades\Datalab;
 
 $schemaResponse = Datalab::generateSchemas()
     ->checkpoint('asdf123')
@@ -117,6 +60,13 @@ $schemaResponse = Datalab::generateSchemas()
 if ($schemaResponse->isSuccess()) {
     // $schemaResponse->suggestions['simple_schema'], moderate_schema, complex_schema
 }
+```
+
+### Form Filling API
+
+```php
+use ImmiTranslate\Datalab\Facades\Datalab;
+use ImmiTranslate\Datalab\FormField;
 
 $fillResponse = Datalab::formFilling()
     ->fields([
