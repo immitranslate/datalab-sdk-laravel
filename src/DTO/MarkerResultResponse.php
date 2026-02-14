@@ -9,6 +9,8 @@ class MarkerResultResponse
     /**
      * @param  array<string, mixed>  $chunks
      * @param  array<string, mixed>  $json
+     * @param  array<int, string>  $markdownPaginated
+     * @param  array<int, string>  $htmlPaginated
      * @param  array<string, mixed>  $segmentationResults
      * @param  array<string, mixed>  $images
      * @param  array<string, mixed>  $metadata
@@ -24,6 +26,8 @@ class MarkerResultResponse
         public readonly array $json,
         public readonly ?string $markdown,
         public readonly ?string $html,
+        public readonly array $markdownPaginated,
+        public readonly array $htmlPaginated,
         public readonly ?string $extractionSchemaJson,
         public readonly array $segmentationResults,
         public readonly array $images,
@@ -44,6 +48,8 @@ class MarkerResultResponse
     {
         $raw = $response->json();
         $raw = is_array($raw) ? $raw : [];
+        $markdown = self::stringOrNull($raw['markdown'] ?? null);
+        $html = self::stringOrNull($raw['html'] ?? null);
 
         return new self(
             httpStatus: $response->status(),
@@ -51,8 +57,10 @@ class MarkerResultResponse
             outputFormat: self::stringOrNull($raw['output_format'] ?? null),
             chunks: self::arrayOrEmpty($raw['chunks'] ?? null),
             json: self::arrayOrEmpty($raw['json'] ?? null),
-            markdown: self::stringOrNull($raw['markdown'] ?? null),
-            html: self::stringOrNull($raw['html'] ?? null),
+            markdown: $markdown,
+            html: $html,
+            markdownPaginated: self::parseMarkdownPaginated($markdown),
+            htmlPaginated: self::parseHtmlPaginated($html),
             extractionSchemaJson: self::stringOrNull($raw['extraction_schema_json'] ?? null),
             segmentationResults: self::arrayOrEmpty($raw['segmentation_results'] ?? null),
             images: self::arrayOrEmpty($raw['images'] ?? null),
@@ -118,5 +126,78 @@ class MarkerResultResponse
     protected static function arrayOrEmpty(mixed $value): array
     {
         return is_array($value) ? $value : [];
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected static function parseMarkdownPaginated(?string $markdown): array
+    {
+        if ($markdown === null || ! str_contains($markdown, '{0}------------------------------------------------')) {
+            return [];
+        }
+
+        preg_match_all('/\{(\d+)\}-{48}/', $markdown, $matches, PREG_OFFSET_CAPTURE);
+
+        if (($matches[0] ?? []) === []) {
+            return [];
+        }
+
+        $pages = [];
+        $markers = $matches[0];
+
+        foreach ($markers as $index => $markerMatch) {
+            $pageNumber = (int) ($matches[1][$index][0] ?? $index);
+            $start = $markerMatch[1] + strlen($markerMatch[0]);
+            $end = $markers[$index + 1][1] ?? strlen($markdown);
+            $pageContent = substr($markdown, $start, $end - $start);
+
+            if ($pageContent === false) {
+                continue;
+            }
+
+            $pages[$pageNumber] = trim($pageContent, "\r\n");
+        }
+
+        ksort($pages);
+
+        return $pages;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected static function parseHtmlPaginated(?string $html): array
+    {
+        if ($html === null || ! str_contains($html, '<div class="page" data-page-id="0">')) {
+            return [];
+        }
+
+        preg_match_all('/<div class="page" data-page-id="(\d+)">/', $html, $matches, PREG_OFFSET_CAPTURE);
+
+        if (($matches[0] ?? []) === []) {
+            return [];
+        }
+
+        $pages = [];
+        $markers = $matches[0];
+
+        foreach ($markers as $index => $markerMatch) {
+            $pageNumber = (int) ($matches[1][$index][0] ?? $index);
+            $start = $markerMatch[1] + strlen($markerMatch[0]);
+            $end = $markers[$index + 1][1] ?? strlen($html);
+            $pageContent = substr($html, $start, $end - $start);
+
+            if ($pageContent === false) {
+                continue;
+            }
+
+            $pageContent = preg_replace('/<\/div>\s*$/', '', $pageContent) ?? $pageContent;
+            $pages[$pageNumber] = trim($pageContent, "\r\n");
+        }
+
+        ksort($pages);
+
+        return $pages;
     }
 }

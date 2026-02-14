@@ -28,10 +28,13 @@ class MarkerResponse
         $raw = is_array($raw) ? $raw : [];
 
         $detail = [];
+        $rawDetail = $raw['detail'] ?? [];
 
-        foreach (($raw['detail'] ?? []) as $item) {
-            if (is_array($item)) {
-                $detail[] = MarkerValidationDetail::fromArray($item);
+        if (is_array($rawDetail)) {
+            foreach ($rawDetail as $item) {
+                if (is_array($item)) {
+                    $detail[] = MarkerValidationDetail::fromArray($item);
+                }
             }
         }
 

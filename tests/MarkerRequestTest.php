@@ -75,6 +75,29 @@ it('supports multiple output formats and extras', function () {
     });
 });
 
+it('supports output format as an array of enums', function () {
+    Http::fake([
+        '*' => Http::response([
+            'request_id' => 'req_789',
+            'request_check_url' => 'https://www.datalab.to/api/v1/marker/req_789',
+            'success' => true,
+            'error' => null,
+            'versions' => [],
+        ], 200),
+    ]);
+
+    Datalab::marker()
+        ->outputFormat([DatalabOutput::Markdown, DatalabOutput::Html])
+        ->executeAsync();
+
+    Http::assertSent(function (Request $request): bool {
+        $body = $request->body();
+
+        return str_contains($body, 'name="output_format"')
+            && str_contains($body, 'markdown,html');
+    });
+});
+
 it('maps a 200 marker response into dto', function () {
     Http::fake([
         '*' => Http::response([
@@ -130,6 +153,23 @@ it('maps a 422 marker response into dto', function () {
         ->and($response->isValidationError())->toBeTrue();
 });
 
+it('handles non-array detail payload without crashing', function () {
+    Http::fake([
+        '*' => Http::response([
+            'detail' => 'Temporary upstream error',
+            'success' => false,
+            'error' => 'upstream timeout',
+        ], 500),
+    ]);
+
+    $response = Datalab::marker()->executeAsync();
+
+    expect($response)->toBeInstanceOf(MarkerResponse::class)
+        ->and($response->status)->toBe(500)
+        ->and($response->detail)->toBe([])
+        ->and($response->isValidationError())->toBeFalse();
+});
+
 it('execute sync polls marker result endpoint until complete', function () {
     Http::fake([
         'https://www.datalab.to/api/v1/marker' => Http::response([
@@ -173,4 +213,27 @@ it('execute sync polls marker result endpoint until complete', function () {
             && $request->url() === 'https://www.datalab.to/api/v1/marker/req_sync_1'
             && $request->hasHeader('X-API-Key', 'test-api-key');
     });
+});
+
+it('parses paginated markdown and html into arrays', function () {
+    Http::fake([
+        'https://www.datalab.to/api/v1/marker/req_paginated' => Http::response([
+            'status' => 'complete',
+            'success' => true,
+            'markdown' => "{0}------------------------------------------------\n# Page 1\nAlpha\n{1}------------------------------------------------\n# Page 2\nBeta",
+            'html' => '<div class="page" data-page-id="0"><h1>Page 1</h1><p>Alpha</p></div><div class="page" data-page-id="1"><h1>Page 2</h1><p>Beta</p></div>',
+        ], 200),
+    ]);
+
+    $response = Datalab::marker()->checkResult('req_paginated');
+
+    expect($response)->toBeInstanceOf(MarkerResultResponse::class)
+        ->and($response->markdownPaginated)->toBe([
+            0 => "# Page 1\nAlpha",
+            1 => "# Page 2\nBeta",
+        ])
+        ->and($response->htmlPaginated)->toBe([
+            0 => '<h1>Page 1</h1><p>Alpha</p>',
+            1 => '<h1>Page 2</h1><p>Beta</p>',
+        ]);
 });

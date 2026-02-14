@@ -70,25 +70,40 @@ class MarkerRequest
         return $this->setBoolean('disable_image_captions', $disableImageCaptions);
     }
 
-    public function outputFormat(DatalabOutput $outputFormat): static
+    /**
+     * @param  DatalabOutput|array<int, DatalabOutput>  $outputFormat
+     */
+    public function outputFormat(DatalabOutput|array $outputFormat): static
     {
-        return $this->set('output_format', $outputFormat->value);
-    }
+        if ($outputFormat instanceof DatalabOutput) {
+            return $this->set('output_format', $outputFormat->value);
+        }
 
-    public function outputFormats(DatalabOutput ...$outputFormats): static
-    {
-        if ($outputFormats === []) {
+        if ($outputFormat === []) {
             unset($this->payload['output_format']);
 
             return $this;
         }
 
+        foreach ($outputFormat as $format) {
+            if (! $format instanceof DatalabOutput) {
+                throw new InvalidArgumentException(
+                    'When passing an array to outputFormat(), every item must be a '.DatalabOutput::class.' enum.'
+                );
+            }
+        }
+
         $formats = array_map(
-            static fn (DatalabOutput $outputFormat): string => $outputFormat->value,
-            $outputFormats
+            static fn (DatalabOutput $format): string => $format->value,
+            $outputFormat
         );
 
         return $this->set('output_format', implode(',', $formats));
+    }
+
+    public function outputFormats(DatalabOutput ...$outputFormats): static
+    {
+        return $this->outputFormat($outputFormats);
     }
 
     public function skipCache(bool $skipCache = true): static
