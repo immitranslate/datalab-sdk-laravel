@@ -4,6 +4,9 @@ namespace ImmiTranslate\Datalab\DTO;
 
 use Illuminate\Http\Client\Response;
 
+/**
+ * @deprecated Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+ */
 class MarkerResultResponse
 {
     /**

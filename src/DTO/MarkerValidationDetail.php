@@ -2,6 +2,9 @@
 
 namespace ImmiTranslate\Datalab\DTO;
 
+/**
+ * @deprecated Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+ */
 class MarkerValidationDetail
 {
     /**

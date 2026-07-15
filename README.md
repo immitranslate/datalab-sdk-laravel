@@ -25,6 +25,8 @@ php artisan vendor:publish --tag="datalab-sdk-laravel-config"
 
 ### Marker API
 
+> **Deprecated:** Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+
 ```php
 use ImmiTranslate\Datalab\Enums\DatalabMode;
 use ImmiTranslate\Datalab\Enums\DatalabOutput;

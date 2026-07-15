@@ -10,6 +10,9 @@ use ImmiTranslate\Datalab\Enums\DatalabOutput;
 use InvalidArgumentException;
 use RuntimeException;
 
+/**
+ * @deprecated Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+ */
 class MarkerRequest
 {
     /** @var array<string, mixed> */

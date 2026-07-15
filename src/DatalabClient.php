@@ -16,6 +16,9 @@ class DatalabClient
         protected int $formFillingPollIntervalSeconds = 5,
     ) {}
 
+    /**
+     * @deprecated Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+     */
     public function marker(?int $pollIntervalSeconds = null): MarkerRequest
     {
         return new MarkerRequest(
