@@ -139,7 +139,7 @@ class MarkerResultResponse
 
         preg_match_all('/\{(\d+)\}-{48}/', $markdown, $matches, PREG_OFFSET_CAPTURE);
 
-        if (($matches[0] ?? []) === []) {
+        if ($matches[0] === []) {
             return [];
         }
 
@@ -151,10 +151,6 @@ class MarkerResultResponse
             $start = $markerMatch[1] + strlen($markerMatch[0]);
             $end = $markers[$index + 1][1] ?? strlen($markdown);
             $pageContent = substr($markdown, $start, $end - $start);
-
-            if ($pageContent === false) {
-                continue;
-            }
 
             $pages[$pageNumber] = trim($pageContent, "\r\n");
         }
@@ -175,7 +171,7 @@ class MarkerResultResponse
 
         preg_match_all('/<div class="page" data-page-id="(\d+)">/', $html, $matches, PREG_OFFSET_CAPTURE);
 
-        if (($matches[0] ?? []) === []) {
+        if ($matches[0] === []) {
             return [];
         }
 
@@ -187,10 +183,6 @@ class MarkerResultResponse
             $start = $markerMatch[1] + strlen($markerMatch[0]);
             $end = $markers[$index + 1][1] ?? strlen($html);
             $pageContent = substr($html, $start, $end - $start);
-
-            if ($pageContent === false) {
-                continue;
-            }
 
             $pageContent = preg_replace('/<\/div>\s*$/', '', $pageContent) ?? $pageContent;
             $pages[$pageNumber] = trim($pageContent, "\r\n");
