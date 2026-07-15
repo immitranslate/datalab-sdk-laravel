@@ -11,7 +11,7 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * @deprecated Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+ * @deprecated Datalab is deprecating the Marker API. Use ConvertRequest via Datalab::convert() instead.
  */
 class MarkerRequest
 {

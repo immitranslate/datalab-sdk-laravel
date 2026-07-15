@@ -16,6 +16,7 @@ class DatalabServiceProvider extends PackageServiceProvider
                 markerPollIntervalSeconds: (int) config('datalab-sdk-laravel.marker_poll_interval_seconds', 5),
                 extractionSchemaPollIntervalSeconds: (int) config('datalab-sdk-laravel.extraction_schema_poll_interval_seconds', 5),
                 formFillingPollIntervalSeconds: (int) config('datalab-sdk-laravel.form_filling_poll_interval_seconds', 5),
+                convertPollIntervalSeconds: (int) config('datalab-sdk-laravel.convert_poll_interval_seconds', 5),
             );
         });
     }

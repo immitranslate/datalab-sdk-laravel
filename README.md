@@ -23,9 +23,37 @@ php artisan vendor:publish --tag="datalab-sdk-laravel-config"
 
 ## Usage
 
+### Convert API
+
+```php
+use ImmiTranslate\Datalab\Enums\DatalabExtra;
+use ImmiTranslate\Datalab\Enums\DatalabMode;
+use ImmiTranslate\Datalab\Enums\DatalabOutput;
+use ImmiTranslate\Datalab\Facades\Datalab;
+
+$response = Datalab::convert()
+    ->fileUrl('https://r2.aws.com/test.pdf') // or ->file('/absolute/path/to/document.pdf')
+    ->mode(DatalabMode::Fast)
+    ->outputFormats(DatalabOutput::Markdown, DatalabOutput::Json)
+    ->extras([DatalabExtra::ExtractLinks, DatalabExtra::ChartUnderstanding]) // optional feature flags
+    ->tokenEfficientMarkdown() // optional; compact markdown for LLM usage
+    ->saveCheckpoint() // optional; checkpoint_id can be reused by /extract or /segment
+    ->webhookUrl('https://testwebhook.com/test123') // optional; overrides account-level webhook for this request
+    ->execute(); // alias of executeSync(), polls /convert/{request_id}
+
+if ($response->isSuccess()) {
+    // $response->markdown, $response->html, $response->json, $response->chunks
+    // $response->checkpointId when saveCheckpoint() was used
+}
+
+// If you only want the initial request_id response (no polling):
+$queued = Datalab::convert()->executeAsync();
+// $queued->requestId, $queued->requestCheckUrl, $queued->isValidationError()
+```
+
 ### Marker API
 
-> **Deprecated:** Datalab is deprecating the Marker API. It is being replaced by the Convert API.
+> **Deprecated:** Datalab is deprecating the Marker API. Use the [Convert API](#convert-api) instead.
 
 ```php
 use ImmiTranslate\Datalab\Enums\DatalabMode;

@@ -4,14 +4,11 @@ namespace ImmiTranslate\Datalab\DTO;
 
 use Illuminate\Http\Client\Response;
 
-/**
- * @deprecated Datalab is deprecating the Marker API. Use ConvertResponse instead.
- */
-class MarkerResponse
+class ConvertResponse
 {
     /**
      * @param  array<string, mixed>  $versions
-     * @param  array<int, MarkerValidationDetail>  $detail
+     * @param  array<int, ValidationDetail>  $detail
      * @param  array<string, mixed>  $raw
      */
     public function __construct(
@@ -36,7 +33,7 @@ class MarkerResponse
         if (is_array($rawDetail)) {
             foreach ($rawDetail as $item) {
                 if (is_array($item)) {
-                    $detail[] = MarkerValidationDetail::fromArray($item);
+                    $detail[] = ValidationDetail::fromArray($item);
                 }
             }
         }

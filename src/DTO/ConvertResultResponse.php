@@ -4,17 +4,13 @@ namespace ImmiTranslate\Datalab\DTO;
 
 use Illuminate\Http\Client\Response;
 
-/**
- * @deprecated Datalab is deprecating the Marker API. Use ConvertResultResponse instead.
- */
-class MarkerResultResponse
+class ConvertResultResponse
 {
     /**
      * @param  array<string, mixed>  $chunks
      * @param  array<string, mixed>  $json
      * @param  array<int, string>  $markdownPaginated
      * @param  array<int, string>  $htmlPaginated
-     * @param  array<string, mixed>  $segmentationResults
      * @param  array<string, mixed>  $images
      * @param  array<string, mixed>  $metadata
      * @param  array<string, mixed>  $costBreakdown
@@ -31,8 +27,6 @@ class MarkerResultResponse
         public readonly ?string $html,
         public readonly array $markdownPaginated,
         public readonly array $htmlPaginated,
-        public readonly ?string $extractionSchemaJson,
-        public readonly array $segmentationResults,
         public readonly array $images,
         public readonly array $metadata,
         public readonly ?bool $success,
@@ -64,8 +58,6 @@ class MarkerResultResponse
             html: $html,
             markdownPaginated: self::parseMarkdownPaginated($markdown),
             htmlPaginated: self::parseHtmlPaginated($html),
-            extractionSchemaJson: self::stringOrNull($raw['extraction_schema_json'] ?? null),
-            segmentationResults: self::arrayOrEmpty($raw['segmentation_results'] ?? null),
             images: self::arrayOrEmpty($raw['images'] ?? null),
             metadata: self::arrayOrEmpty($raw['metadata'] ?? null),
             success: is_bool($raw['success'] ?? null) ? $raw['success'] : null,

@@ -2,10 +2,7 @@
 
 namespace ImmiTranslate\Datalab\DTO;
 
-/**
- * @deprecated Datalab is deprecating the Marker API. Use ValidationDetail instead.
- */
-class MarkerValidationDetail
+class ValidationDetail
 {
     /**
      * @param  array<int, string>  $loc
