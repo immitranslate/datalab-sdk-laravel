@@ -5,6 +5,7 @@ All notable changes to `datalab-sdk-laravel` will be documented in this file.
 ## Unreleased
 
 - Added the `DatalabParseQuality` enum; `ConvertResultResponse` now exposes `parseQuality` (Excellent/Good/Fair/Poor with `recommendedAction()`) alongside the raw `parseQualityScore`.
+- Documented SDK methods and enum cases from the Datalab OpenAPI spec and Conversion recipe (mode guidance, bbox add-on pricing, spreadsheet page_range behavior, file limits, result retention).
 - Added the Convert API (`Datalab::convert()`) with `ConvertRequest`, `ConvertResponse`/`ConvertResultResponse` DTOs, and the `DatalabExtra` enum. Supports the new `include_markdown_in_chunks`, `word_bboxes`, `fence_synthetic_captions`, `token_efficient_markdown`, `processing_location`, and `eval_rubric_id` options.
 - Deprecated the Marker API (`Datalab::marker()`, `MarkerRequest`, and the marker DTOs) — Datalab is replacing it with the Convert API.
 - Added Laravel 13 support (`illuminate/http` and `illuminate/contracts` now allow `^13.0`; CI matrix extended with Laravel 13 / Testbench 11).

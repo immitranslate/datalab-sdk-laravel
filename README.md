@@ -51,6 +51,121 @@ $queued = Datalab::convert()->executeAsync();
 // $queued->requestId, $queued->requestCheckUrl, $queued->isValidationError()
 ```
 
+> **File limits:** maximum file size is 200 MB, with up to 7,000 pages per request. Results are deleted from Datalab servers one hour after processing completes — retrieve them promptly.
+
+#### Convert with high accuracy
+
+```php
+$result = Datalab::convert()
+    ->file('/absolute/path/to/complex_document.pdf')
+    ->mode(DatalabMode::Accurate)
+    ->execute();
+
+echo $result->parseQualityScore; // 0-5
+echo $result->markdown;
+```
+
+#### Quality gates with the parse quality score
+
+Every conversion includes a `parseQualityScore` (0-5), exposed alongside a `parseQuality` enum band (`Excellent` 4.0-5.0, `Good` 3.0-3.9, `Fair` 2.0-2.9, `Poor` 0.0-1.9):
+
+```php
+use ImmiTranslate\Datalab\Enums\DatalabParseQuality;
+
+$result = Datalab::convert()
+    ->file('/absolute/path/to/document.pdf')
+    ->mode(DatalabMode::Balanced)
+    ->execute();
+
+if (in_array($result->parseQuality, [DatalabParseQuality::Fair, DatalabParseQuality::Poor], true)) {
+    // Retry with higher accuracy
+    $result = Datalab::convert()
+        ->file('/absolute/path/to/document.pdf')
+        ->mode(DatalabMode::Accurate)
+        ->execute();
+}
+
+$result->parseQuality?->recommendedAction(); // e.g. "Use the output directly"
+```
+
+#### HTML with block IDs for citations
+
+```php
+$result = Datalab::convert()
+    ->fileUrl('https://example.com/document.pdf')
+    ->outputFormat(DatalabOutput::Html)
+    ->addBlockIds()
+    ->execute();
+// HTML elements carry data-block-id attributes for citation tracking
+```
+
+#### Bounding box add-ons
+
+Billed at $0.30 per 1K pages each; require the `html` output format and also enable word bboxes:
+
+```php
+$result = Datalab::convert()
+    ->file('/absolute/path/to/document.pdf')
+    ->outputFormat(DatalabOutput::Html)
+    ->extras([DatalabExtra::TableCellBboxes, DatalabExtra::ListItemBboxes])
+    ->execute();
+// HTML contains data-bbox and data-confidence on table cells, list items, and words
+```
+
+#### Process specific pages (or spreadsheet sheets)
+
+```php
+$result = Datalab::convert()
+    ->file('/absolute/path/to/large_document.pdf')
+    ->pageRange('0-4,10,15-20') // pages 0-4, 10, and 15-20 (0-indexed)
+    ->execute();
+
+// For spreadsheet files, pageRange() filters by sheet index (0-based):
+$sheets = Datalab::convert()
+    ->file('/absolute/path/to/workbook.xlsx')
+    ->pageRange('0,2') // first and third sheets only
+    ->execute();
+```
+
+#### Extract track changes from Word documents
+
+```php
+$result = Datalab::convert()
+    ->file('/absolute/path/to/document_with_changes.docx')
+    ->extras(DatalabExtra::TrackChanges)
+    ->outputFormat(DatalabOutput::Json)
+    ->execute();
+```
+
+#### Additional config
+
+```php
+$result = Datalab::convert()
+    ->file('/absolute/path/to/workbook.xlsx')
+    ->additionalConfig([
+        'keep_spreadsheet_formatting' => true,
+        'keep_pageheader_in_output' => false,
+    ])
+    ->execute();
+```
+
+#### Checkpoints
+
+Save a processing checkpoint to reuse parsed results without re-processing:
+
+```php
+// Step 1: convert and save a checkpoint
+$result = Datalab::convert()
+    ->file('/absolute/path/to/document.pdf')
+    ->saveCheckpoint()
+    ->execute();
+
+// Step 2: reuse the parsed document, e.g. for schema generation
+$schemas = Datalab::generateSchemas()
+    ->checkpoint($result->checkpointId)
+    ->generate();
+```
+
 ### Marker API
 
 > **Deprecated:** Datalab is deprecating the Marker API. Use the [Convert API](#convert-api) instead.
