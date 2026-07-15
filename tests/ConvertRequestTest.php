@@ -8,6 +8,7 @@ use ImmiTranslate\Datalab\DTO\ValidationDetail;
 use ImmiTranslate\Datalab\Enums\DatalabExtra;
 use ImmiTranslate\Datalab\Enums\DatalabMode;
 use ImmiTranslate\Datalab\Enums\DatalabOutput;
+use ImmiTranslate\Datalab\Enums\DatalabParseQuality;
 use ImmiTranslate\Datalab\Facades\Datalab;
 
 it('sends convert request with fluent api', function () {
@@ -255,6 +256,7 @@ it('execute sync polls convert result endpoint until complete', function () {
                 'error' => null,
                 'page_count' => 3,
                 'runtime' => 2.5,
+                'parse_quality_score' => 4.2,
                 'checkpoint_id' => 'chk_1',
                 'versions' => ['convert' => '2026.07.15'],
             ], 200),
@@ -268,6 +270,8 @@ it('execute sync polls convert result endpoint until complete', function () {
         ->and($response->markdown)->toBe('# Parsed')
         ->and($response->pageCount)->toBe(3)
         ->and($response->runtime)->toBe(2.5)
+        ->and($response->parseQualityScore)->toBe(4.2)
+        ->and($response->parseQuality)->toBe(DatalabParseQuality::Excellent)
         ->and($response->checkpointId)->toBe('chk_1')
         ->and($response->isComplete())->toBeTrue()
         ->and($response->isSuccess())->toBeTrue();
@@ -293,6 +297,8 @@ it('parses paginated convert markdown and html into arrays', function () {
     $response = Datalab::convert()->checkResult('req_paginated');
 
     expect($response)->toBeInstanceOf(ConvertResultResponse::class)
+        ->and($response->parseQualityScore)->toBeNull()
+        ->and($response->parseQuality)->toBeNull()
         ->and($response->markdownPaginated)->toBe([
             0 => "# Page 1\nAlpha",
             1 => "# Page 2\nBeta",

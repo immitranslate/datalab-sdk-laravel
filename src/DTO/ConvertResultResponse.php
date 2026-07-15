@@ -3,6 +3,7 @@
 namespace ImmiTranslate\Datalab\DTO;
 
 use Illuminate\Http\Client\Response;
+use ImmiTranslate\Datalab\Enums\DatalabParseQuality;
 
 class ConvertResultResponse
 {
@@ -32,6 +33,7 @@ class ConvertResultResponse
         public readonly ?bool $success,
         public readonly ?string $error,
         public readonly ?float $parseQualityScore,
+        public readonly ?DatalabParseQuality $parseQuality,
         public readonly ?int $pageCount,
         public readonly ?int $totalCost,
         public readonly array $costBreakdown,
@@ -47,6 +49,7 @@ class ConvertResultResponse
         $raw = is_array($raw) ? $raw : [];
         $markdown = self::stringOrNull($raw['markdown'] ?? null);
         $html = self::stringOrNull($raw['html'] ?? null);
+        $parseQualityScore = self::floatOrNull($raw['parse_quality_score'] ?? null);
 
         return new self(
             httpStatus: $response->status(),
@@ -62,7 +65,8 @@ class ConvertResultResponse
             metadata: self::arrayOrEmpty($raw['metadata'] ?? null),
             success: is_bool($raw['success'] ?? null) ? $raw['success'] : null,
             error: self::stringOrNull($raw['error'] ?? null),
-            parseQualityScore: self::floatOrNull($raw['parse_quality_score'] ?? null),
+            parseQualityScore: $parseQualityScore,
+            parseQuality: $parseQualityScore !== null ? DatalabParseQuality::fromScore($parseQualityScore) : null,
             pageCount: self::intOrNull($raw['page_count'] ?? null),
             totalCost: self::intOrNull($raw['total_cost'] ?? null),
             costBreakdown: self::arrayOrEmpty($raw['cost_breakdown'] ?? null),
