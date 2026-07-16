@@ -2,6 +2,19 @@
 
 All notable changes to `datalab-sdk-laravel` will be documented in this file.
 
+## v1.1.0 - 2026-07-16
+
+### New Features
+
+1. Support for [Datalab's Convert API](https://documentation.datalab.to/api-reference/convert-document)
+2. Added support for `parse_quality`
+
+### Other Changes
+
+1. Marker API is now deprecated
+2. Support for Laravel 13
+3. Additional examples in `README.md`
+
 ## Unreleased
 
 - Added the `DatalabParseQuality` enum; `ConvertResultResponse` now exposes `parseQuality` (Excellent/Good/Fair/Poor with `recommendedAction()`) alongside the raw `parseQualityScore`.
